@@ -197,41 +197,4 @@ ANSWER:
 }]
 """
 
-
-doctor_egs = """
-原始问句：Alice Shaw的publication
-SQLQuery:SELECT info FROM publications WHERE doctor_id = 'tom_123' AND type = 'publications'
-SQLResult: [('Zou W, Yaung SJ, Fuhlbrück F, Ballinger M, Peters E, Palma JF, Shames DS, Gandara D, Jiang Y, Patil NS. ctDNA Predicts Overall Survival in Patients With NSCLC Treated With PD-L1 Blockade or With Chemotherapy. JCO Precis Oncol. 2021 Nov;5:827-838. doi:10.1200/PO.21.00057. PMID:34994614.',), ('Woo XY, Giordano J, Srivastava A, Zhao ZM, Lloyd MW, de Bruijn R, Suh YS, Patidar R, Chen L, Scherer S, Bailey MH, Yang CH, Cortes-Sanchez E, Xi Y, Wang J, Wickramasinghe J, Kossenkov AV, Rebecca VW, Sun H, Mashl RJ, Davies SR, Jeon R, Frech C, Randjelovic J, Rosains J, Galimi F, Bertotti A,...',), ('Radiation oncology,Thomas JS, El-Khoueiry AB, Maurer BJ, Groshen S, Pinski JK, Cobos E, Gandara DR, Lenz HJ, Kang MH, Reynolds CP, Newman EM. A phase I study of intravenous fenretinide (4-HPR) for patients with malignant solid tumors. Cancer Chemother Pharmacol. 2021 Apr;87(4):525-532....',), ('Stem cell (bone marrow) transplant,Sun H, Cao S, Mashl RJ, Mo CK, Zaccaria S, Wendl MC, Davies SR, Bailey MH, Primeau TM, Hoog J, Mudd JL, Dean DA 2nd, Patidar R, Chen L, Wyczalkowski MA, Jayasinghe RG, Rodrigues FM, Terekhanova NV, Li Y, Lim KH, Wang-Gillam A, Van Tine BA, Ma CX, Aft R, Fuh KC,...',), ('Riess JW, Reckamp KL, Frankel P, Longmate J, Kelly KA, Gandara DR, Weipert CM, Raymond VM, Keer HN, Mack PC, Newman EM, Lara PN Jr. Erlotinib and Onalespib Lactate Focused on EGFR Exon 20 Insertion Non-Small Cell Lung Cancer (NSCLC): A California Cancer Consortium Phase I/II Trial (NCI 9878)....',), ('Hematology and medical oncology,Gynecologic oncology,Hereditary cancer program,Pediatric oncology,Robotic surgery,Hirsch FR, Redman MW, Moon J, Agustoni F, Herbst RS, Semrad TJ, Varella-Garcia M, Rivard CJ, Kelly K, Gandara DR, Mack PC. EGFR High Copy Number Together With High EGFR Protein...',), ('Argiris A, Miao J, Cristea MC, Chen AM, Sands JM, Decker RH, Gettinger SN, Daly ME, Faller BA, Albain KS, Yanagihara RH, Garland LL, Byers LA, Wang D, Koczywas M, Redman MW, Kelly K, Gandara DR. A Dose-finding Study Followed by a Phase II Randomized, Placebo-controlled Trial of Chemoradiotherapy...',), ('Surgical oncology,Gadgeel S, Hirsch FR, Kerr K, Barlesi F, Park K, Rittmeyer A, Zou W, Bhatia N, Koeppen H, Paul SM, Shames D, Yi J, Matheny C, Ballinger M, McCleland M, Gandara DR. Comparison of SP142 and 22C3 Immunohistochemistry PD-L1 Assays for Clinical Efficacy of Atezolizumab in Non-Small...',), ('Ranganath H, Jain AL, Smith JR, Ryder J, Chaudry A, Miller E, Hare F, Valasareddy P, Seitz RS, Hout DR, Varga MG, Schweitzer BL, Nielsen TJ, Mullins J, Ross DT, Gandara DR, Vidal GA. Association of a novel 27-gene immuno-oncology assay with efficacy of immune checkpoint inhibitors in advanced...',), ('Gandara D, Reck M, Moro-Sibilot D, Mazieres J, Gadgeel S, Morris S, Cardona A, Mendus D, Ballinger M, Rittmeyer A, Peters S. Fast progression in non-small cell lung cancer: results from the randomized phase III OAK study evaluating second-line atezolizumab versus docetaxel. J Immunother Cancer....',)]
-Answer:Alice Shaw的publication包括：Zou W, Yaung SJ, Fuhlbrück F, Ballinger M, Peters E, Palma JF, Shames DS, Gandara D, Jiang Y, Patil NS. ctDNA Predicts Overall Survival in Patients With NSCLC Treated With PD-L1 Blockade or With Chemotherapy. JCO Precis Oncol. 2021 Nov;5:827-838. doi:10.1200/PO.21.00057. PMID:34994614.；Woo XY, Giordano J, Srivastava A, Zhao ZM, Lloyd MW, de Bruijn R, Suh YS, Patidar R, Chen L, Scherer S, Bailey MH, Yang CH, Cortes-Sanchez E, Xi Y, Wang J, Wickramasinghe J, Kossenkov AV, Rebecca VW, Sun H, Mashl RJ, Davies SR, Jeon R, Frech C, Randjelovic J, Rosains J, Galimi F, Bertotti A,...；Radiation oncology,Thomas JS, El-Khou
-
-
-原始问句：Alice Shaw的clinical trial
-SQLQuery:SELECT brief_title FROM clinical_trials_detail WHERE doctor_id = 'tom_123';
-SQLResult: [('Efficacy of Pegamotecan (PEG-Camptothecin) in Localized or Metastatic Cancer of the Stomach or Gastroesophageal Junction',)]
-Answer:Alice Shaw的clinical trial是Efficacy of Pegamotecan (PEG-Camptothecin) in Localized or Metastatic Cancer of the Stomach or Gastroesophageal Junction.
-
-
-
-原始问句：Alice Shaw的clinical trial和ID
-SQLQuery:SELECT nct_no FROM clinical_trials_detail WHERE doctor_id = 'tom_123';
-SQLResult: [('NCT00080002',)]
-Answer:Alice Shaw的clinical trial ID是NCT00080002
-127.0.0.1 - - [14/Jul/2023 10:08:47] "POST /sqa HTTP/1.1" 200 -
-
-
-
-原始问句：Alice Shaw的NCT00080002的介绍
-SQLQuery:SELECT brief_title FROM clinical_trials_detail WHERE doctor_id = 'tom_123' AND nct_no = 'NCT00080002';
-SQLResult: [('Efficacy of Pegamotecan (PEG-Camptothecin) in Localized or Metastatic Cancer of the Stomach or Gastroesophageal Junction',)]
-Answer:Alice Shaw的NCT00080002的介绍是Efficacy of Pegamotecan (PEG-Camptothecin) in Localized or Metastatic Cancer of the Stomach or Gastroesophageal Junction.
-
-
-原始问句：Alice Shaw的NCT00080002的受试标准
-SQLQuery:SELECT inclusion_criteria, exclusion_criteria FROM clinical_trials_detail WHERE doctor_id = 'tom_123' AND nct_no = 'NCT00080002'
-SQLResult: [('\n                                            - Woman older than 18 years\n                                            Low-risk gestational trophoblastic neoplasia according to FIGO score (FIGO score ≤ 6) with indication of methotrexate as first line treatment\n                                     ...', '\n                                            Prior therapy with an anti-PD-1, anti-PD-L1, anti-PD-L2, anti-CD137, or anti- CTLA 4 antibody (including ipilimumab, tremelimumab or any other antibody or drug specifically targeting T-cell costimulation or immune checkpoint pathways).\n               ...')]
-Answer:女性年龄超过18岁；低危妊娠滋养细胞肿瘤根据FIGO评分（FIGO评分≤6），其中指示甲基叶酸作为第一线治疗；先前接受过抗PD-1，抗PD-L1，抗PD-L2，抗CD137或抗CTLA 4抗体（包括ipilimumab，tremelimumab或任何其他特异性靶向T细胞共刺激或免疫检查点通路的抗体或药
-"""
-
-
 egs = [eg_ask_sale, eg_purchase, eg_if_new_customer_sale, eg_delete_pro]
-# egs = [eg_if_new_customer_sale, doctor_egs]

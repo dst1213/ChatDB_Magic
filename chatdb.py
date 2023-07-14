@@ -123,7 +123,7 @@ def need_update_sql(input_string):
 if __name__ == '__main__':
     # Whether to build examples using the sample files './csvs/*.csv'. Default is True. If data already exists,
     # such as in 'try1024.db', you can select False.
-    init_db = False
+    init_db = True
     mysql_db = init_database(database_info, "try1024", init_db=init_db)
     his_msgs = []
     print("START!")
