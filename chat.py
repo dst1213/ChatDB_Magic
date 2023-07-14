@@ -1,5 +1,6 @@
 import time
 import openai
+import tiktoken
 from dotenv import load_dotenv
 from config import Config
 import token_counter
@@ -24,6 +25,17 @@ def create_chat_message(role, content):
     return {"role": role, "content": content}
 
 
+def _counter(text,model="gpt-3.5-turbo"):
+    # print("====================")
+    # print(f"text:{text}")
+    # print(f"文本长度：{len(text)}")
+    text = str(text) if not isinstance(text,str) else text
+    encoding = tiktoken.encoding_for_model(model)
+    # encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-16k")
+    codelist = encoding.encode(text)
+    # print(f"token数：{len(codelist)}")
+    return len(codelist)
+
 def generate_context(prompt, relevant_memory, full_message_history, model):
     current_context = [
         create_chat_message(
@@ -38,7 +50,12 @@ def generate_context(prompt, relevant_memory, full_message_history, model):
     next_message_to_add_index = len(full_message_history) - 1
     insertion_index = len(current_context)
     # Count the currently used tokens
-    current_tokens_used = token_counter.count_message_tokens(current_context, model)
+    try:
+        current_tokens_used = token_counter.count_message_tokens(current_context, model)
+        if not current_tokens_used:
+            current_tokens_used = _counter(current_context, model)
+    except Exception as e:
+        current_tokens_used = _counter(current_context,model)
     return next_message_to_add_index, current_tokens_used, insertion_index, current_context
 
 
