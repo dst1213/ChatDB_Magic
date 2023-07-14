@@ -8,7 +8,7 @@ Forked from https://github.com/huchenxucs/ChatDB
 - Default database transitioned to SQLite; you can switch back to MySQL by modifying the .env file.
     > DB_TYPE=sqlite or DB_TYPE=mysql
 - Implemented Answer Analysis, utilizing ChatGPT to analyze SQL results.
-    > Optional, set semantic_answer=False in chatdb.py to disable it.
+    > Optional, set use_semantic_answer=False in chatdb.py to disable it.
     ```shell
     USER INPUT: Doctor's name
   
