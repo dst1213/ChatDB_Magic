@@ -16,21 +16,21 @@ def get_steps_from_response(response):
     # pattern = r"```\nStep(\d+):\s+(.*?)\n(.*?)\n```"
     # pattern = r"Step(\d+):\s+(.*?)\n(.*?)\n\n"  # 修改后的模式
     # matches = re.findall(pattern, response, re.DOTALL)
-    color_text = get_colored_text(f"SQL generate response:\n{response}",'yellow')
+    color_text = get_colored_text(f"SQL generate response:\n{response}", 'yellow')
     print(color_text)
     data = eval(response)
-    if not isinstance(data,list):
+    if not isinstance(data, list):
         return
 
     result = []
     for item in data:
-        if isinstance(item,tuple):
+        if isinstance(item, tuple):
             result.append({
-                    "id": int(item[0]),
-                    "description": item[1].strip(),
-                    "sql": item[2].strip(),
-                })
-        if isinstance(item,dict):
+                "id": int(item[0]),
+                "description": item[1].strip(),
+                "sql": item[2].strip(),
+            })
+        if isinstance(item, dict):
             result.append({
                 "id": int(item["step_num"]),
                 "description": item["description"].strip(),
@@ -105,7 +105,7 @@ def chain_of_memory(sql_steps, mysql_db):
     return sql_results_history, new_mem_ops
 
 
-def generate_chat_responses(user_inp, mysql_db, historical_message):
+def generate_chat_responses(user_inp, mysql_db, historical_message, use_semantic_answer=True):
     # ask steps
     prompt_ask_steps_str = prompt_ask_steps.format(user_inp=user_inp)
     response_steps = chat_with_ai(init_system_msg(), prompt_ask_steps_str, historical_message, None,
@@ -122,9 +122,10 @@ def generate_chat_responses(user_inp, mysql_db, historical_message):
     sql_results_history, new_mem_ops = chain_of_memory(response_steps_list_of_dict, mysql_db)
     # print(sql_results_history)
     # print(new_mem_ops)
-    result = semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history)
-    color_text = get_colored_text(f"Answer:{result}",'green')
-    print(color_text)
+    if use_semantic_answer:
+        result = semantic_handler(user_inp, response_steps_list_of_dict, sql_results_history)
+        color_text = get_colored_text(f"Answer:{result}", 'green')
+        print(color_text)
     print("Finish!")
     return
 
@@ -139,32 +140,34 @@ def need_update_sql(input_string):
     #     print("The pattern was not found in the input string.")
     return matches
 
-def semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history):
+
+def semantic_handler(user_inp, response_steps_list_of_dict, sql_results_history):
     prompt_template = """
     Inputs:
     - Question: __query_str__
     - SQLQuery: __sql_str__
     - SQLResult: __sql_result_str__
-    
+
     Requirements:
     - Use the language that the user previously used or the language requested by the user, including the head titles of response.
-    
+
     Answer:
     """
     query = str(user_inp)
     sql = str(response_steps_list_of_dict)
     sql_result = str(sql_results_history)
 
-    user_content = prompt_template.replace("__query_str__",query).replace("__sql_str__",sql).replace("__sql_result_str__",sql_result)
+    user_content = prompt_template.replace("__query_str__", query).replace("__sql_str__", sql).replace(
+        "__sql_result_str__", sql_result)
     assistant_reply = create_chat_completion(
-        model = cfg.fast_llm_model,
+        model=cfg.fast_llm_model,
         messages=[{
             'role': 'system',
             'content': 'You are a sql master.'
         }, {
             "role":
                 "user",
-            "content":user_content
+            "content": user_content
         }]
     )
 
@@ -175,10 +178,11 @@ if __name__ == '__main__':
     # Whether to build examples using the sample files './csvs/*.csv'. Default is True. If data already exists,
     # such as in 'try1024.db', you can select False.
     init_db = False
+    use_semantic_answer = True
     mysql_db = init_database(database_info, "try1024", init_db=init_db)
     his_msgs = []
     print("START!")
     text = input("USER INPUT: ")
     while True:
-        generate_chat_responses(text, mysql_db, his_msgs)
+        generate_chat_responses(text, mysql_db, his_msgs, use_semantic_answer)
         text = input("USER INPUT: ")
