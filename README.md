@@ -23,7 +23,8 @@ Forked from https://github.com/huchenxucs/ChatDB
   ```
 - Introduced automatic language translation for Answer Analysis.
 - Revised prompt template to JSON format and integrated colored text into console chat.
-
+- Added support for the gpt-3.5-turbo-16k model, set FAST_LLM_MODEL=gpt-3.5-turbo-16k in .env file.
+- Included configuration for adding synonyms for table fields in the Prompt, set synonyms in chatdb_prompts.py file.
 
 
 # Run and Use:

@@ -46,7 +46,6 @@ table_details = "\n".join(tables)
 
 def init_database(database_info, db_name, init_db=True):
     db_type = os.getenv("DB_TYPE", "sqlite")
-    print(f"db_type:{db_type}")
     if db_type == 'mysql':
         db = MySQLDB(host=cfg.mysql_host, user=cfg.mysql_user, password=cfg.mysql_password,
                      port=cfg.mysql_port, database=None)

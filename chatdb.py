@@ -1,9 +1,10 @@
 import json, re, time
+import os
 
 from chatgpt import create_chat_completion
 from mysql import MySQLDB
 from config import cfg
-from chatdb_prompts import prompt_ask_steps, prompt_ask_steps_no_egs
+from chatdb_prompts import prompt_ask_steps, prompt_ask_steps_no_egs, synonyms
 from tables import init_database, database_info, table_details
 from langchain.prompts import PromptTemplate
 from langchain.input import get_colored_text
@@ -107,11 +108,11 @@ def chain_of_memory(sql_steps, mysql_db):
 
 def generate_chat_responses(user_inp, mysql_db, historical_message,use_semantic_answer=True):
     # ask steps
-    prompt_ask_steps_str = prompt_ask_steps.format(user_inp=user_inp)
+    prompt_ask_steps_str = prompt_ask_steps.format(user_inp=user_inp).replace("__synonyms_str__",synonyms)
     response_steps = chat_with_ai(init_system_msg(), prompt_ask_steps_str, historical_message, None,
                                   token_limit=cfg.fast_token_limit)
 
-    historical_message[-2]["content"] = prompt_ask_steps_no_egs.format(user_inp=user_inp)
+    historical_message[-2]["content"] = prompt_ask_steps_no_egs.format(user_inp=user_inp).replace("__synonyms_str__",synonyms)
 
     response_steps_list_of_dict = get_steps_from_response(response_steps)
 
@@ -148,9 +149,12 @@ def semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history):
     - SQLResult: __sql_result_str__
     
     Requirements:
-    - Use the language that the user previously used or the language requested by the user, including the head titles of response.
+    - Analyze and interpret the results carefully, combining SQLResult and Question, answer the question accurately and professionally.
+    - If the answer is too long, use markdown format to prettify it silently.
     
     Answer:
+    
+    Reply in the language that the Question used.
     """
     query = str(user_inp)
     sql = str(response_steps_list_of_dict)
@@ -171,11 +175,17 @@ def semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history):
 
     return assistant_reply
 
+def print_info():
+    db_type = os.getenv("DB_TYPE", "sqlite")
+    model = os.getenv("FAST_LLM_MODEL","gpt-3.5-turbo")
+    color_text = get_colored_text(f"db_type:{db_type}, model:{model}",'red')
+    print(color_text)
 
 if __name__ == '__main__':
     # Whether to build examples using the sample files './csvs/*.csv'. Default is True. If data already exists,
     # such as in 'try1024.db', you can select False.
-    init_db = False
+    print_info()
+    init_db = True
     use_semantic_answer = True
     mysql_db = init_database(database_info, "try1024", init_db=init_db)
     his_msgs = []

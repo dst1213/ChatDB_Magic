@@ -1,6 +1,16 @@
 import tiktoken
 from typing import List, Dict
 
+def _counter(text,model="gpt-3.5-turbo"):
+    # print("====================")
+    # print(f"text:{text}")
+    # print(f"文本长度：{len(text)}")
+    text = str(text) if not isinstance(text,str) else text
+    encoding = tiktoken.encoding_for_model(model)
+    # encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-16k")
+    codelist = encoding.encode(text)
+    # print(f"token数：{len(codelist)}")
+    return len(codelist)
 
 def count_message_tokens(messages : List[Dict[str, str]], model : str = "gpt-3.5-turbo-0301") -> int:
     """
@@ -31,7 +41,9 @@ def count_message_tokens(messages : List[Dict[str, str]], model : str = "gpt-3.5
         tokens_per_message = 3
         tokens_per_name = 1
     else:
-        raise NotImplementedError(f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
+        current_tokens_used = _counter(messages, model)
+        return current_tokens_used
+        # raise NotImplementedError(f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens.""")
     num_tokens = 0
     for message in messages:
         num_tokens += tokens_per_message
