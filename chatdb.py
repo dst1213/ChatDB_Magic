@@ -1,9 +1,12 @@
 import json, re, time
+
+from chatgpt import create_chat_completion
 from mysql import MySQLDB
 from config import cfg
 from chatdb_prompts import prompt_ask_steps, prompt_ask_steps_no_egs
 from tables import init_database, database_info, table_details
 from langchain.prompts import PromptTemplate
+from langchain.input import get_colored_text
 from call_ai_function import populate_sql_statement
 from chat import chat_with_ai
 
@@ -13,17 +16,25 @@ def get_steps_from_response(response):
     # pattern = r"```\nStep(\d+):\s+(.*?)\n(.*?)\n```"
     # pattern = r"Step(\d+):\s+(.*?)\n(.*?)\n\n"  # 修改后的模式
     # matches = re.findall(pattern, response, re.DOTALL)
-
+    color_text = get_colored_text(f"SQL generate response:\n{response}",'yellow')
+    print(color_text)
     data = eval(response)
     if not isinstance(data,list):
         return
 
     result = []
     for item in data:
-        result.append({
-                "id": int(item[0]),
-                "description": item[1].strip(),
-                "sql": item[2].strip(),
+        if isinstance(item,tuple):
+            result.append({
+                    "id": int(item[0]),
+                    "description": item[1].strip(),
+                    "sql": item[2].strip(),
+                })
+        if isinstance(item,dict):
+            result.append({
+                "id": int(item["step_num"]),
+                "description": item["description"].strip(),
+                "sql": item["sql"].strip(),
             })
 
     # Extract information and create list of dictionaries
@@ -67,22 +78,28 @@ def chain_of_memory(sql_steps, mysql_db):
     for i in range(num_step):
         cur_step = sql_steps[i]
         ori_sql_cmd = cur_step['sql']
-        print(f"\nStep{cur_step['id']}: {cur_step['description']}\n")
+        color_text = get_colored_text(f"\nStep{cur_step['id']}: {cur_step['description']}\n", 'yellow')
+        print(color_text)
         if need_update_sql(ori_sql_cmd):
             list_of_sql_str = populate_sql_statement(ori_sql_cmd, sql_results_history)
-            print(ori_sql_cmd)
+            color_text = get_colored_text(f"SQL command: \n{ori_sql_cmd}\n", 'yellow')
+            print(color_text)
             new_mem_ops.append(list_of_sql_str)
             for sql_str in list_of_sql_str:
-                print(f"Execute: \n{sql_str}\n")
+                color_text = get_colored_text(f"Execute: \n{sql_str}\n", 'yellow')
+                print(color_text)
                 sql_results, sql_res_str = mysql_db.execute_sql(sql_str)
-                print(f"Database response:\n{sql_res_str}\n")
+                color_text = get_colored_text(f"Database response:\n{sql_res_str}\n", 'yellow')
+                print(color_text)
                 if sql_results:
                     sql_results_history.append(sql_results)
         else:
-            print(f"Execute: \n{ori_sql_cmd}\n")
+            color_text = get_colored_text(f"Execute: \n{ori_sql_cmd}\n", 'yellow')
+            print(color_text)
             sql_results, sql_res_str = mysql_db.execute_sql(ori_sql_cmd)
             new_mem_ops.append([ori_sql_cmd])
-            print(f"Database response:\n{sql_res_str}\n")
+            color_text = get_colored_text(f"Database response:\n{sql_res_str}\n", 'yellow')
+            print(color_text)
             if sql_results:
                 sql_results_history.append(sql_results)
     return sql_results_history, new_mem_ops
@@ -105,6 +122,9 @@ def generate_chat_responses(user_inp, mysql_db, historical_message):
     sql_results_history, new_mem_ops = chain_of_memory(response_steps_list_of_dict, mysql_db)
     # print(sql_results_history)
     # print(new_mem_ops)
+    result = semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history)
+    color_text = get_colored_text(f"Answer:{result}",'green')
+    print(color_text)
     print("Finish!")
     return
 
@@ -118,6 +138,37 @@ def need_update_sql(input_string):
     # else:
     #     print("The pattern was not found in the input string.")
     return matches
+
+def semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history):
+    prompt_template = """
+    Inputs:
+    - Question: __query_str__
+    - SQLQuery: __sql_str__
+    - SQLResult: __sql_result_str__
+    
+    Requirements:
+    - Use the language that the user previously used or the language requested by the user, including the head titles of response.
+    
+    Answer:
+    """
+    query = str(user_inp)
+    sql = str(response_steps_list_of_dict)
+    sql_result = str(sql_results_history)
+
+    user_content = prompt_template.replace("__query_str__",query).replace("__sql_str__",sql).replace("__sql_result_str__",sql_result)
+    assistant_reply = create_chat_completion(
+        model = cfg.fast_llm_model,
+        messages=[{
+            'role': 'system',
+            'content': 'You are a sql master.'
+        }, {
+            "role":
+                "user",
+            "content":user_content
+        }]
+    )
+
+    return assistant_reply
 
 
 if __name__ == '__main__':
