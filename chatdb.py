@@ -10,21 +10,34 @@ from chat import chat_with_ai
 
 def get_steps_from_response(response):
     # Regular expression patterns to extract step number, description, and SQL query
-    pattern = r"```\nStep(\d+):\s+(.*?)\n(.*?)\n```"
-    matches = re.findall(pattern, response, re.DOTALL)
+    # pattern = r"```\nStep(\d+):\s+(.*?)\n(.*?)\n```"
+    # pattern = r"Step(\d+):\s+(.*?)\n(.*?)\n\n"  # 修改后的模式
+    # matches = re.findall(pattern, response, re.DOTALL)
+
+    data = eval(response)
+    if not isinstance(data,list):
+        return
+
+    result = []
+    for item in data:
+        result.append({
+                "id": int(item[0]),
+                "description": item[1].strip(),
+                "sql": item[2].strip(),
+            })
 
     # Extract information and create list of dictionaries
-    result = []
-    for match in matches:
-        step_number = int(match[0])
-        description = match[1]
-        sql_query = match[2]
-        # print(sql_query+'\n')
-        result.append({
-            "id": step_number,
-            "description": description.strip(),
-            "sql": sql_query.strip(),
-        })
+
+    # for match in matches:
+    #     step_number = int(match[0])
+    #     description = match[1]
+    #     sql_query = match[2]
+    #     # print(sql_query+'\n')
+    #     result.append({
+    #         "id": step_number,
+    #         "description": description.strip(),
+    #         "sql": sql_query.replace("`","").strip(),
+    #     })
 
     return result
 
@@ -110,7 +123,7 @@ def need_update_sql(input_string):
 if __name__ == '__main__':
     # Whether to build examples using the sample files './csvs/*.csv'. Default is True. If data already exists,
     # such as in 'try1024.db', you can select False.
-    init_db = True
+    init_db = False
     mysql_db = init_database(database_info, "try1024", init_db=init_db)
     his_msgs = []
     print("START!")
