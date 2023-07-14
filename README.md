@@ -1,13 +1,13 @@
 # ChatDB Magic: Augmenting LLMs with Databases as Their Symbolic Memory 
-## Make ChatDB Support SQLite database and more convenient.
+## Refining ChatDB with SQLite database support and improved convenience
 
 Forked from https://github.com/huchenxucs/ChatDB
 
-# Changes:
-- Support SQLite and MySQL.
-- Default DB changed to SQLite, you can set back to mysql in .env file.
+# Modifications:
+- Added support for SQLite and MySQL.
+- Default database transitioned to SQLite; you can switch back to MySQL by modifying the .env file.
     > DB_TYPE=sqlite or DB_TYPE=mysql
-- Support Answer analysis, use ChatGPT to analyse SQL result.
+- Implemented Answer Analysis, utilizing ChatGPT to analyze SQL results.
     > Optional, set semantic_answer=False in chatdb.py to disable it.
     ```shell
     USER INPUT: Doctor's name
@@ -21,13 +21,13 @@ Forked from https://github.com/huchenxucs/ChatDB
     
     Answer: The name of the doctor is Alice Shaw, MD, PhD.
   ```
-- Support language automatic translate for Answer analysis.
-- Change prompt template to JSON format and use colored text in console chat.
+- Introduced automatic language translation for Answer Analysis.
+- Revised prompt template to JSON format and integrated colored text into console chat.
 
 
 
 # Run and Use:
-- Follow [README](README_raw.md) instructions.
+- Follow the instructions in the [README](README_raw.md).
 - Quick demo:
   ```shell
       copy .env.template .env     # Set your OpenAI key and host, if use mysql, need to set host, port, name, password.
