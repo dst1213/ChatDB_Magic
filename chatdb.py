@@ -127,8 +127,10 @@ def generate_chat_responses(user_inp, mysql_db, historical_message,use_semantic_
         result = semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history)
         color_text = get_colored_text(f"Answer:{result}",'green')
         print(color_text)
+        return result
+
     print("Finish!")
-    return
+    return sql_results_history
 
 
 def need_update_sql(input_string):
