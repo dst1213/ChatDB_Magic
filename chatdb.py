@@ -185,7 +185,7 @@ if __name__ == '__main__':
     # Whether to build examples using the sample files './csvs/*.csv'. Default is True. If data already exists,
     # such as in 'try1024.db', you can select False.
     print_info()
-    init_db = True
+    init_db = False
     use_semantic_answer = True
     mysql_db = init_database(database_info, "try1024", init_db=init_db)
     his_msgs = []

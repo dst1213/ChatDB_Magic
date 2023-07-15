@@ -37,7 +37,7 @@ def populate_sql_statement(sql_str: str, previous_sql_results: list[list[dict]])
     # Try to fix the SQL using GPT:
     function_string = "def populate_sql_statement(sql_str: str, previous_sql_results: list[list[dict]]) -> list[str]:"
     args = [f"'''{sql_str}'''", f"'''{previous_sql_results}'''"]
-    description_string = "Find useful information in the results of the previous sql statement, and replace <> with the corresponding information."
+    description_string = "Find useful information in the results of the previous sql statement, and replace <> with the corresponding information, and if this information is a string, it must be enclosed in single quotes."
 
     result_string = call_ai_function(
         function_string, args, description_string, model=cfg.fast_llm_model

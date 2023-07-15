@@ -1,0 +1,11 @@
+问句：
+Alice Shaw的所有临床研究
+问题：
+SELECT * FROM clinical_trials_detail WHERE doctor_id = tom_123
+tom_123没带单引号
+
+问句：
+alice shaw的临床研究
+问题：
+SELECT * FROM clinical_trials_detail WHERE doctor_id = 'alice shaw';
+小写有问题
