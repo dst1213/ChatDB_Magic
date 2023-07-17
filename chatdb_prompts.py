@@ -101,7 +101,8 @@ def dict_to_str(data):
     result = []
     for key, value_list in data.items():
         value_string = ",".join(value_list)
-        result.append(f"{key}:{value_string}")
+        # result.append(f"{key}:{value_string}")
+        result.append(f"{key},{value_string}")
 
     output_string = "\n".join(result)
     return output_string
@@ -129,7 +130,7 @@ FIELD_SYNONYM_V2 = {"name": ["姓名", "name"],
                     "education": ["学习经历", "学历", "education", "Professional Education", "Education", "Degrees",
                                   "Residencies", "Fellowships", "Board Certifications", "Additional Training",
                                   "Education & Professional Summary"],
-                    "publications": ["文献著作", "出版", "论文", "publications", "abstract", "all publications",
+                    "publications": ["文献著作", "出版", "论文","发表著作", "publications", "abstract", "all publications",
                                      "selected publications"],
                     "clinical_trial": ["临床研究", "研究", "clinical_trial", "clinical trials","clinical trial",
                                        "Current Research and Scholarly Interests", "Clinical Trials", "Projects",

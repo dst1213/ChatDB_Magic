@@ -124,10 +124,16 @@ def generate_chat_responses(user_inp, mysql_db, historical_message,use_semantic_
     # print(sql_results_history)
     # print(new_mem_ops)
     if use_semantic_answer:
-        result = semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history)
-        color_text = get_colored_text(f"Answer:{result}",'green')
-        print(color_text)
-        return result
+        try:
+            result = semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history)
+            color_text = get_colored_text(f"Answer:{result}",'green')
+            print(color_text)
+            return result,sql_results_history
+        except Exception as e:
+            print(f"generate_chat_responses error:{e}")
+            return None,sql_results_history
+
+    print(f"sql_results_history:\n{sql_results_history}")
 
     print("Finish!")
     return sql_results_history
