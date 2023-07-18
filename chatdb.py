@@ -162,7 +162,7 @@ def semantic_handler(user_inp,response_steps_list_of_dict,sql_results_history):
     
     Answer:
     
-    Reply in the language that the Question used.
+    Reply in the language that the "Question" used.
     """
     query = str(user_inp)
     sql = str(response_steps_list_of_dict)
